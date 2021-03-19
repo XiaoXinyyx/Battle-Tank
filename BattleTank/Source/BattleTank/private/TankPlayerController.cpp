@@ -17,6 +17,19 @@ void ATankPlayerController::BeginPlay() {
 	return;
 }
 
+void ATankPlayerController::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	
+	AimTorwardsCrosshair();
+}
+
+
 ATank* ATankPlayerController::GetControlledTank() const {
 	return Cast<ATank>(GetPawn());
+}
+
+void ATankPlayerController::AimTorwardsCrosshair() {
+	if (!GetControlledTank()) { return; }
+
+
 }
