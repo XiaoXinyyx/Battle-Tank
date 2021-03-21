@@ -27,14 +27,16 @@ void ATankAIController::BeginPlay() {
 }
 
 
-// Called every frame
+// 每帧执行
+// 控制 AI tank 瞄准 player tank
 void ATankAIController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	ATank* AITank = GetControlledTank();
 	ATank* PlayerTank = GetPlayerTank();
 	if (AITank && PlayerTank) {
 		AITank->AimAt(PlayerTank->GetActorLocation());
-		UE_LOG(LogTemp, Warning, TEXT("AI %s aiming at %s"), *AITank->GetName(), *PlayerTank->GetName());
+	
+		// TODO Fire if ready
 	}
 }
 
