@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "TankAimingComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Tank.h"
+
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -50,9 +50,13 @@ void UTankAimingComponent::SetTankSkeletalReference(USkeletalMeshComponent* Tank
 
 
 void UTankAimingComponent::MoveBarrelTowards(FVector& AimDirection) const {
-	// 得到目标在坦克参考系下的坐标
-	// 
-	// 改变炮台水平角度
+	// 坦克参考系下的瞄准方向
+	FRotator RelativeAimDirection = AimDirection.Rotation() - GetOwner()->GetActorRotation();
+	
+	// 改变炮台水平角度，根据帧率、最大旋转速度、旋转角度限制
 
-	// 改变炮台俯仰角度
+	Cast<ATank>(GetOwner())->TurretYaw = RelativeAimDirection.Yaw;
+	Cast<ATank>(GetOwner())->GunPitch = RelativeAimDirection.Pitch;
+
+	// 改变炮台俯仰角度，根据帧率、最大抬升速度、抬升角度限制
 }
