@@ -17,7 +17,6 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 
@@ -34,10 +33,23 @@ void ATank::AimAt(const FVector& HitLocation) {
 
 
 void ATank::SetTankSkeletalReference(USkeletalMeshComponent* TankSkeletal) {
+	if (TankSkeletal == nullptr) { return; }
 	TankAimingComponent->SetTankSkeletalReference(TankSkeletal);
 }
 
 
+void ATank::Fire() const {
+	UE_LOG(LogTemp, Warning, TEXT("Tank fires!"));
+	return;
+}
+
+
+float ATank::GetTurretYaw() const {	return this->TurretYaw; }
+float ATank::GetGunPitch() const { return this->GunPitch; }
+
+
+void ATank::SetTurretYaw(float Yaw) { TurretYaw = Yaw; }
+void ATank::SetGunPitch(float Pitch) { GunPitch = Pitch; }
 
 
 

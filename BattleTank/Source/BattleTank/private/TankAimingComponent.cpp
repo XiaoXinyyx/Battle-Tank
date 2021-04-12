@@ -5,12 +5,12 @@
 
 
 // Sets default values for this component's properties
-UTankAimingComponent::UTankAimingComponent()
-{
+UTankAimingComponent::UTankAimingComponent() {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false; // TODO Should this tick?
+	PrimaryComponentTick.bCanEverTick = false;
 }
+
 
 void UTankAimingComponent::BeginPlay() {
 	Super::BeginPlay();
@@ -22,7 +22,7 @@ void UTankAimingComponent::BeginPlay() {
 
 
 void UTankAimingComponent::AimAt(const FVector& AimLocation, float LauchSpeed) {
-	if (!TankSkeletal) {
+	if (TankSkeletal == nullptr) {
 		return;
 	}
 	FVector LauchVelocity; // OUT parameter
@@ -46,10 +46,11 @@ void UTankAimingComponent::AimAt(const FVector& AimLocation, float LauchSpeed) {
 
 
 void UTankAimingComponent::SetTankSkeletalReference(USkeletalMeshComponent* TankSkeletalToSet) {
-	TankSkeletal = TankSkeletalToSet;
-	if (!TankSkeletal) {
+	if (TankSkeletalToSet == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("TankAimingComponent can't find skeletal mesh"));
+		return;
 	}
+	TankSkeletal = TankSkeletalToSet;
 }
 
 
@@ -59,27 +60,28 @@ void UTankAimingComponent::MoveTurretTowards(FVector& AimDirection) {
 	RelativeAimDirection.Yaw = FRotator::NormalizeAxis(RelativeAimDirection.Yaw); // Clamp the Angle to (-180, 180]
 
 	// 改变炮台水平角度，根据帧率、最大旋转速度、旋转角度限制
-	ElevateTurret(RelativeAimDirection.Pitch - OwnerTank->GunPitch);
+	ElevateTurret(RelativeAimDirection.Pitch - OwnerTank->GetGunPitch());
 
 	// 改变炮台俯仰角度，根据帧率、最大抬升速度、抬升角度限制
-	RotateTurret(RelativeAimDirection.Yaw - OwnerTank->TurretYaw);
+	RotateTurret(RelativeAimDirection.Yaw - OwnerTank->GetTurretYaw());
 }
+
 
 void UTankAimingComponent::ElevateTurret(float RelativeSpeed) {
-	if (!OwnerTank) { return; }
-	RelativeSpeed = FMath::Clamp(RelativeSpeed, -1.f, 1.f);
-	float RawNewElevation = OwnerTank->GunPitch
+	if (OwnerTank == nullptr) { return; }
+	RelativeSpeed = FMath::Clamp<float>(RelativeSpeed, -1.f, 1.f);
+	float NewElevation = OwnerTank->GetGunPitch()
 		+ RelativeSpeed * MaxEleDegreePerSec * GetWorld()->DeltaTimeSeconds;
 
-	OwnerTank->GunPitch = FMath::Clamp<float>(RawNewElevation, MinElevationDegree, MaxElevationDegree);
+	OwnerTank->SetGunPitch(FMath::Clamp<float>(NewElevation, MinElevationDegree, MaxElevationDegree));
 }
 
+
 void UTankAimingComponent::RotateTurret(float RelativeSpeed) {
-	if (!OwnerTank) { return; }
+	if (OwnerTank == nullptr) { return; }
 	RelativeSpeed = FMath::Clamp(RelativeSpeed, -1.f, 1.f);
-	float RawNewYaw = OwnerTank->TurretYaw
+	float NewYaw = OwnerTank->GetTurretYaw()
 		+ RelativeSpeed * MaxRotDegreePerSec * GetWorld()->DeltaTimeSeconds;
 
-	OwnerTank->TurretYaw = FMath::Clamp<float>(RawNewYaw, MinRotateDegree, MaxRotateDegree);
-
+	OwnerTank->SetTurretYaw(FMath::Clamp<float>(NewYaw, MinRotateDegree, MaxRotateDegree));
 }

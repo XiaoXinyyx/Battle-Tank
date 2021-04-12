@@ -25,20 +25,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetTankSkeletalReference(USkeletalMeshComponent* TankSkeletal);
 
-	UPROPERTY(BlueprintReadOnly, Category = Turret)
-	float TurretYaw = 0.f;	// 当前炮台的水平旋转角度
+	UFUNCTION(BlueprintCallable, Category = Input)
+	void Fire() const;
 
-	UPROPERTY(BlueprintReadOnly, Category = Turret)
-	float GunPitch = 0.f;	// 当前炮台的抬升角度
-
+	void SetTurretYaw(float Yaw);
+	void SetGunPitch(float Pitch);
+	
+	UFUNCTION(BlueprintCallable, Category = Turret)
+	float GetTurretYaw() const;
+	UFUNCTION(BlueprintCallable, Category = Turret)
+	float GetGunPitch() const;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-	UTankAimingComponent* TankAimingComponent = nullptr;
+	UTankAimingComponent* TankAimingComponent;
 
 private:
 	UPROPERTY(EditAnywhere, Category = TankProperty)
-	float LauchSpeed = 8000.f; // TODO find sensible default
+	float LauchSpeed = 4000.f; 
+
+	float TurretYaw = 0.f;	// 当前炮台的水平旋转角度
+	float GunPitch = 0.f;	// 当前炮台的抬升角度
 };
